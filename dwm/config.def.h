@@ -11,10 +11,10 @@ static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 #define ICONSIZE                     24     /* icon size */
-#define ICONSPACING                   5      /* space between icon and title */
+#define ICONSPACING                   2      /* space between icon and title */
 #define SHOWWINICON                   1      /* 0 means no winicon */
-static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=16", "NotoColorEmoji:pixelsize=12:antialias=true:autohint=true" };
-static const char dmenufont[]       = "monospace:size=12";
+static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=14", "NotoColorEmoji:pixelsize=14:antialias=true:autohint=true" };
+/* static const char dmenufont[]       = "monospace:size=12"; */
 static const char col_gray1[]       = "#2E3440";
 static const char col_gray2[]       = "#3B4252";
 static const char col_gray3[]       = "#D8DEE9";
@@ -27,18 +27,21 @@ static const char *colors[][3]      = {
 };
 
 static const char *const autostart[] = {
+	"numlockx", "s", "on", NULL,
 	"xset", "s", "off", NULL,
 	"xset", "s", "noblank", NULL,
         "xset", "-dpms", NULL,
 	"/usr/lib/mate-polkit/polkit-mate-authentication-agent-1", NULL,
-	"flameshot", NULL,
 	"picom", "-b", NULL,
+	"sh", "-c", "feh --randomize --bg-fill /$HOME/.config/walls/*", NULL,
+	"pasystray", NULL,
+	"nm-tray", NULL,
 	"slstatus", NULL,
 	NULL /* terminate */
 };
 
 /* tagging */
-static const char *tags[] = { "", "󰗹", "", "", "", "", "󰅍", "", "" };
+static const char *tags[] = { "", "󰗹", "", "", "", "", "󰅍", "", "󰒋" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -86,7 +89,8 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_x, 	   spawn,          {.v = termcmd } },
 	{ MODKEY,			XK_b,	   spawn,	   SHCMD ("brave-browser") },
-	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
+	{ MODKEY|ShiftMask,		XK_b,	   spawn,	   SHCMD ("thorium-browser") },
+	{ MODKEY|ControlMask|ShiftMask, XK_b,      togglebar,      {0} },
 	{ MODKEY,			XK_e,	   spawn,	   SHCMD ("thunar") },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -120,6 +124,8 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_r,                      spawn,          SHCMD("systemctl reboot")}, 
+	{ MODKEY|ControlMask|ShiftMask, XK_s,                      spawn,          SHCMD("systemctl suspend")},
 };
 
 /* button definitions */
