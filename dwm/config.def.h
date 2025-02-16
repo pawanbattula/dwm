@@ -31,7 +31,7 @@ static const char *const autostart[] = {
 	"xset", "s", "off", NULL,
 	"xset", "s", "noblank", NULL,
         "xset", "-dpms", NULL,
-	"/usr/lib/mate-polkit/polkit-mate-authentication-agent-1", NULL,
+	"lxpolkit", NULL,
 	"picom", "-b", NULL,
 	"sh", "-c", "feh --randomize --bg-fill /$HOME/.config/walls/*", NULL,
 	"pasystray", NULL,
