@@ -64,7 +64,7 @@ enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMIcon, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
-       NetWMWindowTypeDialog, NetClientList, NetDesktopNames, NetDesktopViewport, NetNumberOfDesktops, NetCurrentDesktop, NetWMDesktop, NetLast }; /* EWMH atoms */
+       NetWMWindowTypeDialog, NetClientList, NetDesktopNames, NetDesktopViewport, NetNumberOfDesktops, NetCurrentDesktop, NetLast }; /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
@@ -234,7 +234,6 @@ static void unmanagealtbar(Window w);
 static void unmanagetray(Window w);
 static void unmapnotify(XEvent *e);
 static void updatecurrentdesktop(void);
-static void setclientdesktop(Client *c);
 static void updatebarpos(Monitor *m);
 static void updatebars(void);
 static void updateclientlist(void);
@@ -1203,7 +1202,6 @@ manage(Window w, XWindowAttributes *wa)
 		XRaiseWindow(dpy, c->win);
 	attach(c);
 	attachstack(c);
-	setclientdesktop(c);
 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
 		(unsigned char *) &(c->win), 1);
 	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
@@ -1636,7 +1634,6 @@ sendmon(Client *c, Monitor *m)
 	detachstack(c);
 	c->mon = m;
 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
-	setclientdesktop(c);
 	attach(c);
 	attachstack(c);
 	if (c->isfullscreen)
@@ -1825,7 +1822,6 @@ setup(void)
 	netatom[NetNumberOfDesktops] = XInternAtom(dpy, "_NET_NUMBER_OF_DESKTOPS", False);
 	netatom[NetCurrentDesktop] = XInternAtom(dpy, "_NET_CURRENT_DESKTOP", False);
 	netatom[NetDesktopNames] = XInternAtom(dpy, "_NET_DESKTOP_NAMES", False);
-	netatom[NetWMDesktop] = XInternAtom(dpy, "_NET_WM_DESKTOP", False);
 	/* init cursors */
 	cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
@@ -1935,7 +1931,6 @@ tag(const Arg *arg)
 {
 	if (selmon->sel && arg->ui & TAGMASK) {
 		selmon->sel->tags = arg->ui & TAGMASK;
-		setclientdesktop(selmon->sel);
 		focus(NULL);
 		arrange(selmon);
 	}
@@ -2020,7 +2015,6 @@ toggletag(const Arg *arg)
 	newtags = selmon->sel->tags ^ (arg->ui & TAGMASK);
 	if (newtags) {
 		selmon->sel->tags = newtags;
-		setclientdesktop(selmon->sel);
 		focus(NULL);
 		arrange(selmon);
 	}
@@ -2196,24 +2190,6 @@ void updatecurrentdesktop(void){
 	}
 	long data[] = { i };
 	XChangeProperty(dpy, root, netatom[NetCurrentDesktop], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 1);
-}
-
-void
-setclientdesktop(Client *c)
-{
-	long rawdata[] = { c->tags };
-	int i = 0;
-
-	/* dwm tags are a bitmask (a client can be on several tags at once);
-	 * EWMH expects a single desktop index per window, so report the
-	 * highest set tag bit, matching the convention updatecurrentdesktop()
-	 * already uses for _NET_CURRENT_DESKTOP. */
-	while (*rawdata >> (i + 1))
-		i++;
-
-	long data[] = { i };
-	XChangeProperty(dpy, c->win, netatom[NetWMDesktop], XA_CARDINAL, 32,
-		PropModeReplace, (unsigned char *)data, 1);
 }
 
 int
