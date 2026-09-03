@@ -9,8 +9,8 @@ static const int usealtbar          = 1;        /* 1 means use non-dwm status ba
 static const char *altbarclass      = "Polybar"; /* Alternate bar class name */
 static const char *alttrayname      = "tray";    /* Polybar tray instance name */
 static const char *altbarcmd        = "/home/user/.config/polybar/launch.sh"; /* Alternate bar launch command */
-#define ICONSIZE 24   /* icon size */
-#define ICONSPACING 5 /* space between icon and title */
+#define ICONSIZE 2   /* icon size */
+#define ICONSPACING 2 /* space between icon and title */
 static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=14:antialias=true:autohint=true:hintstyle=hintfull", "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#2E3440";
